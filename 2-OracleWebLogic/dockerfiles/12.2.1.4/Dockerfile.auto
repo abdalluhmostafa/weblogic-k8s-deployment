@@ -1,0 +1,14 @@
+FROM docker-registry.aot.sa/oracle/weblogic:12.2.1.4-generic
+ENV DOMAIN_NAME="${DOMAIN_NAME:-base_domain}" \
+    ADMIN_LISTEN_PORT="${ADMIN_LISTEN_PORT:-7001}" \
+    ADMIN_NAME="${ADMIN_NAME:-AdminServer}" \
+    ADMINISTRATION_PORT_ENABLED="${ADMINISTRATION_PORT_ENABLED:-true}" \
+    ADMINISTRATION_PORT="${ADMINISTRATION_PORT:-9002}"
+
+COPY pippoWebApp.war /u01/oracle
+COPY /root/weblogic/mount /u01/oracle/properties
+# Expose ports for admin, managed server, and debug
+EXPOSE $ADMIN_PORT $ADMIN_SERVER_SSL_PORT $MANAGED_SERVER_PORT $MANAGED_SERVER_SSL_PORT $DEBUG_PORT
+RUN java -cp /u01/oracle/wlserver/server/lib/weblogic.jar weblogic.Deployer -adminurl t3://127.0.0.1:7001 -user aot -password oracle@aot -deploy /u01/oracle/pippoWebApp.war  -remote -upload
+WORKDIR $DOMAIN_HOME
+CMD ["startAdminServer.sh"]
