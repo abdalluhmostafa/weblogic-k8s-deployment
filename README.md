@@ -19,7 +19,7 @@ We will deploy RHEL8 with JDK8 as infrastructure for our Weblogic
 
 1. Go to OracleJava8 Dir
 
-` cd OracleJava/8 ` 
+` cd 1-OracleJava/8 ` 
 
 2. Download REQUIRED FILES TO BUILD THIS IMAGE 
 FROM ` https://www.oracle.com/java/technologies/javase-server-jre8-downloads.html `  to  ` OracleJava/8 ` 
@@ -46,7 +46,7 @@ We will use image to build WebLogic image in next step
 
 1. Change Dir to OracleWeblogic/dockerfiles/12.2.1.4 
 
-` $ cd /OracleWeblogic/dockerfiles/12.2.1.4 `
+` $ cd 2-OracleWeblogic/dockerfiles/12.2.1.4 `
 
 2. Download REQUIRED FILES TO BUILD THIS IMAGE
 
@@ -85,19 +85,23 @@ docker run --name weblogic-app -d -p 7001:7001 -p 9002:9002  -v $PWD/properties:
 
 Dockerfile use image ` oracle/weblogic:12.2.1.4-generic ` that's you build in step2 to Deploy your application inside weblogic
 
+1. Change your dir to deploy-domain
 
-1. Copy your WAR file to container-scripts folder 
+` cd 3-deploy-domain `
 
 
-2. Build your image
+2. Copy your WAR file to container-scripts folder 
+
+
+3. Build your image
 
 ` $ docker build -t deploy-domain . `
 
 
-3. Edit ` properties/domain.properties ` and put your console username and password
+4. Edit ` properties/domain.properties ` and put your console username and password
 
 
-4. Run your application 
+5. Run your application 
 
 
 ``` 
@@ -132,19 +136,19 @@ ADMINISTRATION_PORT=9002
 ```
 
 
-5. Check your docker container
+6. Check your docker container
 
 ` $ docker ps ` 
 
-6. Check container logs 
+7. Check container logs 
 
 ` $ docker logs -f my_deployment `
 
-7. Access weblogic admin
+8. Access weblogic admin
 
 ` http://IP:7010/console `
 
-8. Access your deployment
+9. Access your deployment
 
 ` http://IP:7010/$Deployment_Name `
 
