@@ -158,3 +158,29 @@ ADMINISTRATION_PORT=9002
 
 Check automate-deployment-tips to know how auto deploy works  
 we use wlst offline deployment
+
+
+
+===================================================
+
+# Deploy your Domain to kubernetes cluster
+
+1. Create deployment
+
+Change image to your domain image inside deployment.yaml
+
+```
+cd k8s-deployment
+
+kubectl apply -f deployment.yaml 
+
+```
+
+2. Create Service
+
+` kubectl apply -f service.yaml `
+
+
+3. Create Ingress 
+
+` kubectl apply -f ingress.yaml ` 
