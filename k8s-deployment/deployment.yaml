@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weblogic-deployment
+  labels:
+    app: weblogic-deployment # this label servies will use to monitor deplyment pod 
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: weblogic # this label will let deployment mange pods 
+  template:
+    metadata:
+      labels:
+        app: weblogic # pod label
+    spec: 
+      topologySpreadConstraints: # this will make pods on all nodes 
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app: weblogic ######### end 
+      containers:
+      - name: weblogic # container name
+        image: docker-registry.aot.sa/testtom:l3 # IMAGE
+        imagePullPolicy: Always
+        readinessProbe:
+            httpGet:
+              path: /weblogic/ready
+              port: 7001
+            initialDelaySeconds: 15
+            timeoutSeconds: 5
+        env:
+          #- name: JAVA_OPTS
+          #  value: "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addressess=true -Dfile.encoding=UTF-8 -Djava.awt.headless=true -XX:+UseG1GC -XX:MinRAMPercentage=50.0 -XX:MaxRAMPercentage=90.0"
+          - name: APP_NAME # Admin username
+            value: "mydeployment"
+          #- name: weblogic_PASSWORD # don't use this... use secrets ..
+          #  value: "admin"
+          - name: APP_PKG_FILE # this is secret contain password
+            value: "mydeployment.war"
+        ports:
+        - containerPort: 7001
+
+        resources:
+          requests: # request resources for every pod 
+            memory: "256Mi" 
+            cpu: "300m"
+          limits: # Limit resources for every pod
+            memory: "512Mi"
+            cpu: "500m"
+
+#        volumeMounts:
+#          - name: weblogic-data
+#            mountPath: "/bitnami/weblogic"
+      # this for private docker registry you must create it frest 
+      imagePullSecrets:
+      - name: myregistrykey # docker resistry secrets on same namespace
+
+
+#      volumes:
+#      - name: weblogic-data
+#        persistentVolumeClaim:
+#          claimName: weblogic-pvc3 # pvc name
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1

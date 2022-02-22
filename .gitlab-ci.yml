@@ -1,0 +1,69 @@
+---
+stages:
+  - build-image
+  - test-image
+  - deploy-image
+
+variables:
+  env_tag: "latest"
+  k8s_deployment_dev: "weblogic-dev-deployment"
+  k8s_deployment_prd: "weblogic-prd-deployment"
+
+before_script:
+  - echo "$CI_REGISTRY_IMAGE"
+  - echo "$CI_REGISTRY_USER"
+#  - echo "$CI_REGISTRY_PASSWORD"
+  - echo "$CI_PIPELINE_ID"
+  - docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}"
+  
+building-image:
+  stage: build-image
+  script:
+    - echo "Building container image $CI_REGISTRY_IMAGE"
+    - mvn clean install
+    - docker build -t "${CI_REGISTRY_IMAGE}" .
+    - docker tag "${CI_REGISTRY_IMAGE}" "$CI_REGISTRY_IMAGE":"${env_tag}"
+    - docker push "$CI_REGISTRY_IMAGE":"${env_tag}"
+
+testing-image:
+  stage: test-image
+  script:
+    # thising .....
+    - docker pull ${CI_REGISTRY_IMAGE}:"${env_tag}"
+    - docker run -d --name $CI_PIPELINE_ID ${CI_REGISTRY_IMAGE}:"${env_tag}"
+      # get container IP
+    - CONTAINER_IP=$(docker inspect -f '{{.NetworkSettings.IPAddress }}' $CI_PIPELINE_ID) 
+    - sleep 15
+    - curl $CONTAINER_IP:7001
+    - docker rm -f $CI_PIPELINE_ID
+
+deploy-image-dev:
+  stage: deploy-image
+  script:
+
+#    weblogic-dev this is a container name inside deployment , and this command will update image tag and rollout update pods
+    - kubectl set image deployment/$k8s_deployment_dev weblogic-dev=$CI_REGISTRY_IMAGE:$env_tag
+    # if the tag changed deployment will rollout automactly 
+    # if tag not changed then this command to update pod with need image " pull new image with same tag"
+    - kubectl rollout restart deployments "$k8s_deployment_dev"
+  except:
+    - master
+
+deploy-image-prd:
+  stage: deploy-image
+  script:
+#    - sed -i 's/"${CI_REGISTRY_IMAGE}.*$"/"${CI_REGISTRY_IMAGE}":"${env_tag}"/g' rollout/prd-deployemnt.yaml
+#    - echo "$k8s_deployment"
+#    - kubectl apply -f rollout/prd-deployemnt.yaml
+#    - kubectl rollout restart deployments "$k8s_deployment_prd"
+
+#     weblogic-prd this is a container name inside deployment , and this command will update image tag and rollout update pods
+    - kubectl set image deployment/$k8s_deployment_prd weblogic-prd=$CI_REGISTRY_IMAGE:$env_tag
+    # if the tag changed deployment will rollout automactly 
+    # if tag not changed then this command to update pod with need image " pull new image with same tag"
+    - kubectl rollout restart deployments "$k8s_deployment_prd"
+  rules: # push to prod will happen only when code in dev==master 
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      when: manual

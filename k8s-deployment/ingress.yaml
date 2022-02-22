@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+  generation: 1
+  labels:
+    app: weblogic
+  name: weblogic-ingress
+  namespace: default
+spec:
+  rules:
+  - host: weblogic.ehkely.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: weblogic-cluster-service
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - weblogic.ehkely.com
+    secretName: weblogic-tls-ingress
