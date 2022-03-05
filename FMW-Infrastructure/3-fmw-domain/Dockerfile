@@ -43,14 +43,20 @@ ENV ORACLE_HOME="/u01/oracle" \
     CUSTOM_DEBUG_PORT="${CUSTOM_DEBUG_PORT:-8453}" \
     CUSTOM_DEBUG_FLAG="${CUSTOM_DEBUG_FLAG:-false}" \
     CUSTOM_JAVA_OPTIONS="-Doracle.jdbc.fanEnabled=false -Dweblogic.StdoutDebugEnabled=false" \
-    CUSTOM_CONNECTION_STRING="${CUSTOM_CONNECTION_STRING:-"172.16.35.2:1521:DEVADFUTF"}" \
-    CUSTOM_PATH="$PATH:${JAVA_HOME}/bin:/u01/oracle/oracle_common/common/bin:/u01/oracle/wlserver/common/bin:/u01/oracle/container-scripts"
+    CUSTOM_CONNECTION_STRING="${CUSTOM_CONNECTION_STRING:-"InfraDB:1521/InfraPDB1.us.oracle.com"}" \
+    CUSTOM_PATH="$PATH:${JAVA_HOME}/bin:/u01/oracle/oracle_common/common/bin:/u01/oracle/wlserver/common/bin:/u01/oracle/container-scripts" \
+    APP_NAME=${APP_NAME:-attendance.ear} \
+    APP_PKG_FILE=${APP_PKG_FILE:-attendance.ear} \
+    LIBRARIES_NAME=${LIBRARIES_NAME:-MedanTemplate} \
+    LIBRARIES_PKG_FILE=${LIBRARIES_PKG_FILE:-MedanTemplate.war}
 
 # Add files required to build this image
 COPY container-scripts/* /u01/oracle/container-scripts/
 COPY properties/* /u01/oracle/properties/
-COPY MedanTemplate.war /u01/oracle/
-COPY attendance.ear /u01/oracle/
+# COPY Libares 
+COPY build-files/MedanTemplate.war /u01/oracle/
+# Copy deployment app
+COPY build-files/attendance.ear /u01/oracle/
 #Create directory where domain will be written to
 USER root
 RUN mkdir -p $CUSTOM_DOMAIN_ROOT && \

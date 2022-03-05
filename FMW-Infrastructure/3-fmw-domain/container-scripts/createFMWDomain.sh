@@ -152,13 +152,13 @@ then
 
         echo "Domain Configuration Phase"
         echo "=========================="
-
+         # this will create your domain if not exsits
         wlst.sh -skipWLSModuleScanning /u01/oracle/container-scripts/createInfraDomain.py -oh ${ORACLE_HOME} -jh ${JAVA_HOME} -parent ${DOMAIN_ROOT} -name ${DOMAIN_NAME} -user ${USER} -password ${PASS} -rcuDb ${CONNECTION_STRING} -rcuPrefix ${RCUPREFIX} -rcuSchemaPwd ${DB_SCHEMA_PASS} -adminListenPort ${ADMIN_LISTEN_PORT} -adminName ${ADMIN_NAME} -adminPortEnabled ${ADMINISTRATION_PORT_ENABLED} -administrationPort ${ADMINISTRATION_PORT} -managedName ${MANAGED_NAME} -managedServerPort ${MANAGEDSERVER_PORT} -prodMode ${PRODUCTION_MODE}
-
+   # this will create Datasoruce
 	wlst.sh -skipWLSModuleScanning -loadProperties  /u01/oracle/properties/datasoruce.properties /u01/oracle/container-scripts/createDataSoruce.py
-
+   # this will deploy binary 
 	wlst.sh -skipWLSModuleScanning /u01/oracle/container-scripts/createBinary.py
-
+   # this will deploy your deployment
 	wlst.sh -skipWLSModuleScanning /u01/oracle/container-scripts/createAPP.py
         retval=$?
 

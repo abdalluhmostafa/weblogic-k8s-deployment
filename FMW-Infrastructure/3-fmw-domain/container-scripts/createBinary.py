@@ -3,9 +3,9 @@ import os
 # Deployment Information
 domainhome = os.environ.get('DOMAIN_HOME', '/u01/oracle/user_projects/domains/base_domain')
 admin_name = os.environ.get('ADMIN_NAME', 'AdminServer')
-appname    = os.environ.get('APP_NAME', 'MedanTemplate')
-apppkg     = os.environ.get('APP_PKG_FILE', 'MedanTemplate.war')
-appdir     = os.environ.get('APP_PKG_LOCATION', '/u01/oracle')
+appname    = os.environ.get('LIBRARIES_NAME')
+apppkg     = os.environ.get('LIBRARIES_PKG_FILE')
+appdir     = os.environ.get('LIBRARIES_PKG_LOCATION', '/u01/oracle')
 
 # Read Domain in Offline Mode
 # ===========================
