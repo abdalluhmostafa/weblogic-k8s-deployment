@@ -11,7 +11,7 @@ metadata:
   namespace: default
 spec:
   rules:
-  - host: weblogic.ehkely.com
+  - host: enjaz.aotsa.ml
     http:
       paths:
       - backend:
@@ -23,5 +23,5 @@ spec:
         pathType: ImplementationSpecific
   tls:
   - hosts:
-    - weblogic.ehkely.com
-    secretName: weblogic-tls-ingress
+    - enjaz.aotsa.ml
+    secretName: enjaz-tls-ingress

@@ -1,0 +1,9 @@
+dsname=$DS-NAME
+dsdbname=default;create=true
+dsjndiname=jdbc/$JNDI-NAME
+dsdriver=oracle.jdbc.OracleDriver
+dsurl=jdbc:oracle:thin:@$IP:1521:DEVADFUTF
+dsusername=$DS-USERNAME
+dspassword=$DS-PASSWORD
+dstestquery=SQL ISVALID
+dsmaxcapacity=1

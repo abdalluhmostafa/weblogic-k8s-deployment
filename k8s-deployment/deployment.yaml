@@ -5,7 +5,7 @@ metadata:
   labels:
     app: weblogic-deployment # this label servies will use to monitor deplyment pod 
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: weblogic # this label will let deployment mange pods 
@@ -23,7 +23,7 @@ spec:
             app: weblogic ######### end 
       containers:
       - name: weblogic # container name
-        image: docker-registry.aot.sa/testtom:l3 # IMAGE
+        image: docker-registry.aot.sa/aot-domian-volume:latest # IMAGE
         imagePullPolicy: Always
         readinessProbe:
             httpGet:
@@ -34,35 +34,52 @@ spec:
         env:
           #- name: JAVA_OPTS
           #  value: "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addressess=true -Dfile.encoding=UTF-8 -Djava.awt.headless=true -XX:+UseG1GC -XX:MinRAMPercentage=50.0 -XX:MaxRAMPercentage=90.0"
-          - name: APP_NAME # Admin username
-            value: "mydeployment"
-          #- name: weblogic_PASSWORD # don't use this... use secrets ..
-          #  value: "admin"
-          - name: APP_PKG_FILE # this is secret contain password
-            value: "mydeployment.war"
+          - name: DOMAIN_NAME # Admin username
+            value: "base_domain"
+          - name: ADMIN_NAME # Admin username
+            value: "AdminServer"
+          - name: ADMIN_HOST # Admin username
+            value: "AdminContainer"
+          - name: ADMIN_LISTEN_PORT # Admin username
+            value: "7001"
+          - name: MANAGEDSERVER_PORT # Admin username
+            value: "8001"
+          - name: MANAGED_NAME # Admin username
+            value: "infraServer1"
+          - name: ADMINISTRATION_PORT_ENABLED # Admin username
+            value: "false"
+          - name: ADMINISTRATION_PORT # Admin username
+            value: "9002"
+          - name: PRODUCTION_MODE # Admin username
+            value: "prod"
+          - name: CONNECTION_STRING # Admin username
+            value: "172.16.35.2:1521:DEVADFUTF"
+          - name: RCUPREFIX # Admin username
+            value: "INFRA52"
         ports:
         - containerPort: 7001
 
         resources:
           requests: # request resources for every pod 
-            memory: "256Mi" 
-            cpu: "300m"
+            memory: "1024Mi" 
+            cpu: "1000m"
           limits: # Limit resources for every pod
-            memory: "512Mi"
-            cpu: "500m"
+            memory: "4048Mi"
+            cpu: "6000m"
 
-#        volumeMounts:
-#          - name: weblogic-data
-#            mountPath: "/bitnami/weblogic"
+        volumeMounts:
+          - name: weblogic-data
+            mountPath: "/u01/oracle/user_projects/domains"
       # this for private docker registry you must create it frest 
       imagePullSecrets:
       - name: myregistrykey # docker resistry secrets on same namespace
 
-
-#      volumes:
-#      - name: weblogic-data
-#        persistentVolumeClaim:
-#          claimName: weblogic-pvc3 # pvc name
+      securityContext:
+        fsGroup: 2000 
+      volumes:
+      - name: weblogic-data
+        persistentVolumeClaim:
+          claimName: weblogic-pvc3 # pvc name
   strategy:
     type: RollingUpdate
     rollingUpdate:
