@@ -27,24 +27,24 @@ MAINTAINER Monica Riccelli <monica.riccelli@oracle.com>
 
 # WLS Configuration
 # ---------------------------
-ENV ORACLE_HOME=/u01/oracle \
-    VOLUME_DIR=/u01/oracle/user_projects \
-    SCRIPT_FILE=/u01/oracle/container-scripts/* \
-    HEALTH_SCRIPT_FILE=/u01/oracle/container-scripts/get_healthcheck_url.sh \
-    DOMAIN_NAME="${DOMAIN_NAME:-base_domain}" \
-    ADMIN_LISTEN_PORT="${ADMIN_LISTEN_PORT:-7001}" \
-    ADMIN_NAME="${ADMIN_NAME:-AdminServer}" \
-    ADMIN_HOST="${ADMIN_HOST:-InfraAdminContainer}" \
-    ADMINISTRATION_PORT_ENABLED="${ADMINISTRATION_PORT_ENABLED:-true}" \
-    ADMINISTRATION_PORT="${ADMINISTRATION_PORT:-9002}" \
-    MANAGEDSERVER_PORT="${MANAGEDSERVER_PORT:-8001}" \
-    MANAGED_NAME="${MANAGED_NAME:-infraServer1}" \
-    MANAGED_SERVER_CONTAINER="${MANAGED_SERVER_CONTAINER:-false}" \
-    RCUPREFIX="${RCUPREFIX:-INFRA01}" \
-    PRODUCTION_MODE="${PRODUCTION_MODE:-prod}" \
-    CONNECTION_STRING=${CONNECTION_STRING:-InfraDB:1521/InfraPDB1.us.oracle.com} \
-    JAVA_OPTIONS="-Doracle.jdbc.fanEnabled=false -Dweblogic.StdoutDebugEnabled=false" \
-    PATH=$PATH:/usr/java/default/bin:/u01/oracle/oracle_common/common/bin:/u01/oracle/wlserver/common/bin:/u01/oracle/container-scripts \
+ENV ORACLE_HOME="/u01/oracle" \
+    DOMAIN_NAME="${CUSTOM_DOMAIN_NAME:-base_domain}" \
+    CUSTOM_DOMAIN_ROOT="/u01/oracle/user_projects/domains" \
+    CUSTOM_DOMAIN_HOME="/u01/oracle/user_projects/domains/${DOMAIN_NAME}" \
+    CUSTOM_ADMIN_LISTEN_PORT="${CUSTOM_ADMIN_LISTEN_PORT:-7001}" \
+    CUSTOM_ADMIN_NAME="${CUSTOM_ADMIN_NAME:-AdminServer}" \
+    CUSTOM_ADMIN_HOST="${CUSTOM_ADMIN_HOST:-AdminContainer}" \
+    CUSTOM_MANAGEDSERVER_PORT="${CUSTOM_MANAGEDSERVER_PORT:-8001}" \
+    CUSTOM_MANAGED_BASE_NAME="${CUSTOM_MANAGED_BASE_NAME:-infraServer}" \
+    CUSTOM_MANAGED_NAME="${CUSTOM_MANAGED_NAME}" \
+    CUSTOM_MANAGED_SERVER_COUNT="${CUSTOM_MANAGED_SERVER_COUNT:-2}" \
+    CUSTOM_CLUSTER_NAME="${CUSTOM_CLUSTER_NAME:-Cluster}" \
+    CUSTOM_PRODUCTION_MODE="${CUSTOM_PRODUCTION_MODE:-prod}" \
+    CUSTOM_DEBUG_PORT="${CUSTOM_DEBUG_PORT:-8453}" \
+    CUSTOM_DEBUG_FLAG="${CUSTOM_DEBUG_FLAG:-false}" \
+    CUSTOM_JAVA_OPTIONS="-Doracle.jdbc.fanEnabled=false -Dweblogic.StdoutDebugEnabled=false" \
+    CUSTOM_CONNECTION_STRING="${CUSTOM_CONNECTION_STRING:-"InfraDB:1521/InfraPDB1.us.oracle.com"}" \
+    CUSTOM_PATH="$PATH:${JAVA_HOME}/bin:/u01/oracle/oracle_common/common/bin:/u01/oracle/wlserver/common/bin:/u01/oracle/container-scripts" \
     APP_NAME=${APP_NAME:-attendance.ear} \
     APP_PKG_FILE=${APP_PKG_FILE:-attendance.ear} \
     LIBRARIES_NAME=${LIBRARIES_NAME:-MedanTemplate} \

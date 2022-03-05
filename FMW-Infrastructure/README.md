@@ -134,46 +134,35 @@ this happend becouse I added to lines for deploy war and ear inside  ` container
 
 4. Build your image
 
+Create domain folder 
+
+` mkdir domain ` 
+` chmod 777 domain ` 
+
+Build image 
+
 ` $ docker build -t fmw-domain-in-image . `
 
 If you want to use it outside this VM, Push it to docker registry 
 
 
+This deployment will deploy 
+- Create domain if not exsits
+- Datasource
+- Libaray 
+- Deployment
 
+##### YOU MUST CHANGE  RCUPREFIX={INFRA63} to any new value  becouse I can't be 2 domains with same RCUPREFIX, so when you create new domain change this values , also you must use voulem to prevent recreate domain
 
 5. Run your application 
 
 
 ``` 
-docker run --name my_deployment -d \ 
--p 7010:7001 -v $PWD/properties:/u01/oracle/properties \
--e APP_NAME=$My_app -e APP_PKG_FILE=My_app.war  deploy-domain 
+docker run -p 7018:7001 --name aotapp  -v $PWD/domain:/u01/oracle/user_projects/domains -v $PWD/properties:/u01/oracle/properties -e "DOMAIN_NAME=base_domain" -e "ADMIN_NAME=AdminServer" -e "ADMIN_HOST=AdminContainer" -e "ADMIN_LISTEN_PORT=7001" -e "MANAGEDSERVER_PORT=8001" -e "MANAGED_NAME=infraServer1" -e "ADMINISTRATION_PORT_ENABLED=false" -e "ADMINISTRATION_PORT=9002" -e "PRODUCTION_MODE=prod" -e CONNECTION_STRING=172.16.35.2:1521:DEVADFUTF -e RCUPREFIX=INFRA63 -e APP_NAME=attendance.ear  -e APP_PKG_FILE=attendance.ear -e LIBRARIES_NAME=MedanTemplate -e LIBRARIES_PKG_FILE=MedanTemplate.war fmw-domain-in-image:latest
+
  
 ```
 
-NOTE:  There are alot of other ENV values you can use but by default is
-
-
-```
-APP_NAME=pippoWebApp 
-
-APP_PKG_FILE=pippoWebApp.war 
-
-APP_PKG_LOCATION=/u01/oracle
-
-USER_MEM_ARGS=-Djava.security.egd=file:/dev/./urandom
-
-DOMAIN_NAME=base_domain
-
-ADMIN_LISTEN_PORT=7001
-
-ADMIN_NAME=AdminServer
-
-ADMINISTRATION_PORT_ENABLED=false
-
-ADMINISTRATION_PORT=9002
-
-```
 
 
 6. Check your docker container
@@ -182,15 +171,15 @@ ADMINISTRATION_PORT=9002
 
 7. Check container logs 
 
-` $ docker logs -f my_deployment `
+` $ docker logs -f aotapp `
 
 8. Access weblogic admin
 
-` http://IP:7010/console `
+` http://IP:7018/console `
 
 9. Access your deployment
 
-` http://IP:7010/$Deployment_Name `
+` http://IP:7018/$Deployment_Name `
 
 
 
